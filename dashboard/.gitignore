@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.claude/
+neuro_config.json
+user_habits.json
+*.log
+.DS_Store

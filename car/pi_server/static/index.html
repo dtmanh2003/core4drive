@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart AI Car Plus</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Smart AI Car Plus</h1>
+    <div id="statusBadge" class="badge locked">LOCKED</div>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Pi Camera Live</h2>
+      <img id="piCam" src="/video_feed" alt="Pi Camera" />
+    </section>
+
+    <section class="card">
+      <h2>Laptop Face Auth</h2>
+      <video id="laptopCam" autoplay playsinline muted></video>
+      <canvas id="faceCanvas" style="display:none"></canvas>
+      <label>Tên người đăng ký</label>
+      <input id="faceName" placeholder="Ví dụ: Nguyen Loc" />
+      <div class="row">
+        <button onclick="startLaptopCamera()">Bật camera laptop</button>
+        <button onclick="registerFace()">Đăng ký mặt</button>
+        <button onclick="verifyFace()">Xác nhận mặt</button>
+      </div>
+      <p id="faceMsg">Face auth dùng webcam laptop, không dùng Pi Camera.</p>
+      <div class="row">
+        <button onclick="lockCar()">Lock</button>
+        <button onclick="beepTest()">Test beep</button>
+      </div>
+      <h3>Faces đã lưu</h3>
+      <div id="facesList">Loading...</div>
+    </section>
+
+    <section class="card">
+      <h2>Web Control</h2>
+      <label>Điều chỉnh tốc độ: <span id="speedLabel">120</span></label>
+      <input id="speedRange" type="range" min="40" max="180" value="120" oninput="updateSpeedLabel()" />
+      <div class="controls">
+        <button onmousedown="manualDrive('forward')" onmouseup="stopCar()" ontouchstart="manualDrive('forward')" ontouchend="stopCar()">↑</button>
+        <button onmousedown="manualDrive('left')" onmouseup="stopCar()" ontouchstart="manualDrive('left')" ontouchend="stopCar()">←</button>
+        <button class="stop" onclick="stopCar()">STOP</button>
+        <button onmousedown="manualDrive('right')" onmouseup="stopCar()" ontouchstart="manualDrive('right')" ontouchend="stopCar()">→</button>
+        <button onmousedown="manualDrive('back')" onmouseup="stopCar()" ontouchstart="manualDrive('back')" ontouchend="stopCar()">↓</button>
+      </div>
+      <div class="row">
+        <button onclick="laneAI()">AI bám đường</button>
+        <button onclick="roamAI()">AI tự di chuyển</button>
+        <button onclick="parkAI()">AI tự đỗ</button>
+      </div>
+      <div class="row">
+        <button onclick="startVoice('vi-VN')">Voice Việt</button>
+        <button onclick="startVoice('ja-JP')">Voice 日本語</button>
+      </div>
+      <p id="voiceText">VN: tiến/lùi/trái/phải/dừng/tự lái/tự đỗ/nhìn trái/nhìn phải. JP: 前/後ろ/左/右/止まれ/自動運転/駐車/左を見て/右を見て.</p>
+    </section>
+
+
+    <section class="card">
+      <h2>Camera / HC-SR04 Servo</h2>
+      <p class="hint">Điều khiển 2 servo: một cái xoay Pi Camera, một cái xoay HC-SR04.</p>
+      <label>Pi Camera servo: <span id="camServoLabel">90°</span></label>
+      <input id="camServoRange" type="range" min="15" max="165" value="90" oninput="updateServoLabels()" onchange="setCamServoFromSlider()" />
+      <label>HC-SR04 servo: <span id="usServoLabel">90°</span></label>
+      <input id="usServoRange" type="range" min="15" max="165" value="90" oninput="updateServoLabels()" onchange="setUsServoFromSlider()" />
+      <div class="row">
+        <button onclick="look('left')">Nhìn trái</button>
+        <button onclick="look('center')">Nhìn giữa</button>
+        <button onclick="look('right')">Nhìn phải</button>
+      </div>
+      <p class="hint">AI tự di chuyển sẽ tự quét trái/phải khi gặp vật cản hoặc ngõ cụt.</p>
+    </section>
+
+    <section class="card">
+      <h2>Dashboard</h2>
+      <div class="dash">
+        <div><span>Tốc độ</span><b id="dashSpeed">0.00 m/s</b></div>
+        <div><span>Tốc độ</span><b id="dashSpeedMpm">0.0 m/min</b></div>
+        <div><span>Khoảng cách</span><b id="dashDist">N/A</b></div>
+        <div><span>IR gần</span><b id="dashIR">N/A</b></div>
+        <div><span>Pin motor</span><b id="dashMotorBat">N/A</b></div>
+        <div><span>PiPower5</span><b id="dashPiBat">N/A</b></div>
+        <div><span>Camera servo</span><b id="dashCamAngle">N/A</b></div>
+        <div><span>HC-SR04 servo</span><b id="dashUsAngle">N/A</b></div>
+      </div>
+      <h3>Raw telemetry</h3>
+      <pre id="telemetry">Loading...</pre>
+    </section>
+
+    <section class="card wide">
+      <h2>History</h2>
+      <button onclick="loadEvents()">Reload history</button>
+      <table>
+        <thead><tr><th>Time</th><th>Event</th><th>Detail</th><th>Image</th></tr></thead>
+        <tbody id="eventsBody"></tbody>
+      </table>
+    </section>
+  </main>
+<script src="/static/app.js"></script>
+</body>
+</html>
